@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import logo from './photo-illustrations/ScheduleMonitor.png';
 import checkIcon from './icons/check.svg';
 import plusIcon from './icons/plus.svg';
@@ -30,7 +30,9 @@ const App = () => {
   const [isRegistered, setIsRegistered] = useState(false);
   const [isGroupsCreated, setIsGroupsCreated] = useState(false);
   const [isInputVisible, setIsInputVisible] = useState(false);
-  const [selectedGroup, setSelectedGroup] = useState("NN–nm–n/m");
+  const [selectedGroup, setSelectedGroup] = useState(
+  localStorage.getItem('selectedGroup') || "NN–nm–n/m"
+);
   const [isNumerator, setIsNumerator] = useState(true);
   const [isGroupDropdownOpen, setIsGroupDropdownOpen] = useState(false);
   const [activeDeptId, setActiveDeptId] = useState(null);
@@ -39,10 +41,10 @@ const App = () => {
   const [activeCell, setActiveCell] = useState(null);
   const [isScheduleSaved, setIsScheduleSaved] = useState(false);
 
-  const [cellData, setCellData] = useState({
-    numerator: {},
-    denominator: {}
-  });
+  const [cellData, setCellData] = useState(() => {
+  const saved = localStorage.getItem('local_schedule');
+  return saved ? JSON.parse(saved) : { numerator: {}, denominator: {} };
+});
 
   const [subjects, setSubjects] = useState([
     { 
@@ -68,7 +70,31 @@ const App = () => {
       groups: [{ id: 201, name: '', isSubmitted: false }]
     }
   ]);
-
+  useEffect(() => {
+  localStorage.setItem('selectedGroup', selectedGroup);
+}, [selectedGroup]);
+  useEffect(() => {
+  const fetchSchedule = async () => {
+    if (selectedGroup && selectedGroup !== "NN–nm–n/m") {
+      try {
+        console.log(`Завантаження розкладу для групи: ${selectedGroup}`);
+        const response = await fetch(`http://127.0.0.1:8000/api/get-schedule?group=${encodeURIComponent(selectedGroup)}`);
+        if (!response.ok) throw new Error("Сервер повернув помилку");
+        const data = await response.json();
+        if (data.numerator || data.denominator) {
+          setCellData({
+            numerator: data.numerator || {},
+            denominator: data.denominator || {}
+          });
+          console.log("Дані успішно завантажені:", data);
+        }
+      } catch (e) {
+        console.warn("Дані для цієї групи ще не створені або сервер офлайн");
+      }
+    }
+  };
+  fetchSchedule();
+}, [selectedGroup]);
   const hasNoSubjectsYet = subjects.length <= 1;
 
   const handleHeaderAddSubjectClick = () => {
@@ -174,10 +200,46 @@ const App = () => {
     setActiveCell(null);
   };
 
-  const handleSaveSchedule = () => {
-    setIsScheduleSaved(true);
-    setScreen('profile');
+  const handleSaveSchedule = async () => {
+  // 1. Визначаємо текстову назву тижня на основі перемикача isNumerator
+  const weekType = isNumerator ? 'numerator' : 'denominator';
+
+  console.log("Спроба збереження для:", selectedGroup, "Тиждень:", weekType);
+
+  if (selectedGroup === "NN–nm–n/m" || !selectedGroup) {
+    alert("Будь ласка, оберіть або введіть назву групи!");
+    return;
+  }
+
+  // 2. Формуємо payload правильно
+  const payload = {
+    group: selectedGroup,
+    week: weekType,
+    schedule: cellData[weekType] || {}
   };
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/save-schedule', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      alert("Розклад успішно збережено!");
+      setIsScheduleSaved(true);
+    } else {
+      const errorData = await response.json();
+      alert(`Помилка сервера: ${errorData.detail || 'Невідома помилка'}`);
+    }
+  } catch (error) {
+    console.error("Помилка зв'язку з сервером:", error);
+    alert("Не вдалося з'єднатися з сервером. Перевір, чи запущений Python-скрипт.");
+  }
+};
 
   return (
     <div className="app-wrapper">
