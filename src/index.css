@@ -1122,27 +1122,20 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto auto;
-  gap: 25px; /* Збільшив відступ між кнопками */
+  gap: 25px;
   width: 100%;
   max-width: 900px;
   margin: 30px auto 0;
 }
-
-/* Загальний стиль кнопок */
 .profile-action-btn {
-  /* ТЕМНО-КОРИЧНЕВИЙ ФОН (як на макеті) */
   background-color: #5f3f2a !important; 
   border: none;
-  border-radius: 30px; /* Більш округлі краї */
+  border-radius: 30px;
   padding: 15px 10px;
-  
-  /* ПОМАРАНЧЕВИЙ ТЕКСТ */
   color: #e69d5c !important; 
-  
-  /* ЗБІЛЬШЕНИЙ ТЕКСТ */
   font-size: 24px !important; 
   font-weight: 700;
-  
+
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1150,7 +1143,7 @@ body {
   text-align: center;
   gap: 15px;
   transition: all 0.3s ease;
-  min-height: 110px; /* Збільшив висоту кнопок */
+  min-height: 110px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   line-height: 1.2;
 }
@@ -1161,21 +1154,18 @@ body {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
 }
 
-/* Позиціонування */
 .btn-left-top { grid-column: 1; grid-row: 1; }
 .btn-right-top { grid-column: 2; grid-row: 1; }
 .btn-left-bottom { grid-column: 1; grid-row: 2; }
 
-/* Стиль іконки стрілочки */
 .orange-arrow {
   color: #e69d5c;
-  width: 32px; /* Більша іконка для великого тексту */
+  width: 32px;
   height: 32px;
 }
 
-/* Стиль вітального тексту */
 .profile-welcome-text {
-  font-size: 60px; /* Ще більший шрифт для імені */
+  font-size: 60px;
   color: #e69d5c;
   font-weight: 800;
   margin-bottom: 50px;
