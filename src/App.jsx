@@ -475,7 +475,7 @@ const App = () => {
                             <th colSpan="6" className="table-header-cell">
                               <div className="header-items-wrapper">
                                 <div className="header-pill group-pill">
-                                  <span className="group-name-text">Розклад гр. {selectedGroup} ({isNumerator ? "Чисельник" : "Знаменник"})</span>
+                                  <span className="group-name-text">Розклад гр. {selectedGroup}</span>
                                 </div>
                                 <button className="add-subject-btn" onClick={handleHeaderAddSubjectClick}>
                                   <img src={plusIcon} alt="" className="btn-plus-icon" />
