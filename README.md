@@ -7,3 +7,5 @@ https://www.figma.com/site/ZTNUwF0W6Ewe1nhvofRcVG/Untitled?node-id=0-1&t=qIJ4HPh
 
 Project presentation in pdf file: Hackathon
 
+Video Demo: screen_1777668966605.mp4
+Video guide on how to launch: Інструкція.mp4
